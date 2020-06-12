@@ -1,0 +1,28 @@
+{
+  "name": "umi-nest",
+  "version": "1.0.0",
+  "description": "基于umi-nest实现微前端子应用",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yayxs/umi-nest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yayxs/umi-nest/issues"
+  },
+  "homepage": "https://github.com/yayxs/umi-nest#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

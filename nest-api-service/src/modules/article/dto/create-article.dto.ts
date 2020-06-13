@@ -1,16 +1,17 @@
-import { IsInt, IsString, IsNotEmpty } from 'class-validator';
-
+import { IsString, IsNotEmpty } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateArticleDto {
   @IsNotEmpty()
   @IsString()
-  readonly title: string; // 标题
+  @ApiPropertyOptional({ description: '文章标题' })
+  readonly title: string;
   @IsString()
-  readonly subTitle: string; // 副标题
-  readonly status: string; // 写作状态
-  readonly avatar: string; // 头像
+  @ApiPropertyOptional({ description: '文章副标题' })
+  readonly subTitle: string;
+  @ApiPropertyOptional({ description: '文章写作状态' })
+  readonly status: boolean;
   @IsNotEmpty()
   @IsString()
-  readonly mainContent: string;
-  @IsInt()
-  readonly pageviews: number; // 浏览量
+  @ApiPropertyOptional({ description: '文章内容' })
+  readonly content: string;
 }

@@ -12,8 +12,6 @@ export class Article {
   @ApiProperty({ example: 18, description: '永远的18' })
   age: number;
 
-
-
   @ApiProperty({ enum: UserRole })
   role: UserRole;
 }

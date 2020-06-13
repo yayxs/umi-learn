@@ -12,54 +12,55 @@ import {
   HttpStatus,
   HttpException,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { ApiQuery, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  ApiQuery,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
+import { ArticleEntity } from './entity/article.entity';
 
 @Controller('article')
+@ApiTags('文章')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
-  @Post()
-  @ApiBody({ description: '创建文章' })
-  create(@Body() createArticleDto: CreateArticleDto): string {
-    return this.articleService.create(createArticleDto);
-  }
-
-  // 查询
+  @ApiOperation({ summary: '显示文章列表' })
   @Get()
-  @ApiQuery({ name: 'name', required: false })
-  @ApiQuery({ name: 'role', enum: UserRole })
-  @ApiResponse({
-    status: 200,
-    description: 'get ...',
-    type: Article,
-  })
-  fetch(@Query() { id }, @Headers('token') token): string {
-    if (!id) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          message: '请求参数id 必传',
-          error: 'id is required',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    return this.articleService.fetch(id);
+  async fetch(@Query() { skip, take, keywords }): Promise<ArticleEntity[]> {
+    return await this.articleService.fetch(skip, take, keywords);
   }
 
-  @Patch(':id')
-  @ApiParam({ name: 'id' })
-  @ApiBody({ description: '请输入message' })
-  update(@Param('id', new ParseIntPipe())  id , @Body() { message }): string {
-    console.log(typeof id)
-    return this.articleService.update(id, message);
+  @Post()
+  @ApiOperation({ summary: '创建文章' })
+  async create(@Body() createArticleDto: CreateArticleDto): Promise<any> {
+    return await this.articleService.create(createArticleDto);
   }
+  // @Get(':id')
+  // detail(@Param('id') id: string): any {
+  //   return {
+  //     id: '1',
+  //     title: 'haha ',
+  //   };
+  // }
+  // @Put(':id')
+  // @ApiParam({ name: 'id' })
+  // @ApiBody({ description: '请输入message' })
+  // update(@Param('id', new ParseIntPipe()) id, @Body() body:): string {
+  //   console.log(typeof id);
+  //   return this.articleService.update(id, message);
+  // }
 
-  // 删除
-  @Delete()
-  remove(@Query() { id }): string {
-    return this.articleService.remove(id);
-  }
+  // @Delete(':id')
+  // @ApiOperation({ summary: '删除一篇文章' })
+  // async remove(@Param('id') id :string): string {
+  //   return {
+  //     success:true
+  //   }
+  // }
 }

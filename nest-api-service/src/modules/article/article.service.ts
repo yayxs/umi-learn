@@ -3,6 +3,8 @@ import { ArticleEntity } from './entity/article.entity';
 import { Repository, getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
+import { QueryArticleDto } from './dto/query-article.dto';
+import { IArticleRes } from './interfaces/article.interface';
 
 // interface IQuery {
 //   skip?: string ;
@@ -17,27 +19,31 @@ export class ArticleService {
     private articleRepository: Repository<ArticleEntity>,
   ) {}
 
-  async fetch(skip = '0', take = '10', keywords = ''): Promise<any> {
-    const builder = this.articleRepository.createQueryBuilder('article');
-    const total = await builder
-      .where('article.title like :title', { title: '%' + keywords + '%' })
-      .getCount();
-    const data = await builder
-      .where('article.title like :title', { title: '%' + keywords + '%' })
-      .orderBy('title', 'DESC')
-      .skip(Number(skip))
-      .take(Number(take))
-      .getMany();
-
+  async fetch(dto: QueryArticleDto): Promise<IArticleRes> {
+    const { pageSize = 10, currentPage = 1 } = dto;
+    const builder = await getRepository(ArticleEntity)
+      .createQueryBuilder('article')
+      .skip(pageSize * (currentPage - 1))
+      .take(pageSize)
+      .getManyAndCount(); // 联合查询
+    // const builder = this.articleRepository.createQueryBuilder('article');
+    // const total = await builder
+    //   .where('article.title like :title', { title: '%' + keywords + '%' })
+    //   .getCount();
+    // const data = await builder
+    //   .where('article.title like :title', { title: '%' + keywords + '%' })
+    //   .orderBy('title', 'DESC')
+    //   .skip(limit * (page - 1))
+    //   .take(limit)
+    //   .getMany();
     return {
-      data: data,
+      data: builder[0],
       meta: {
-        total,
-        per_page: take,
-        cur_page: skip,
+        total: builder[1],
+        pageSize,
+        currentPage,
       },
     };
-    // return await this.articleRepository.find();
   }
 
   async create(dto: CreateArticleDto): Promise<any> {

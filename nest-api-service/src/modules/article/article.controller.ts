@@ -25,6 +25,8 @@ import {
 } from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entity/article.entity';
+import { IArticleRes } from './interfaces/article.interface';
+import { QueryArticleDto } from './dto/query-article.dto';
 
 @Controller('article')
 @ApiTags('文章')
@@ -32,8 +34,8 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
   @ApiOperation({ summary: '显示文章列表' })
   @Get()
-  async fetch(@Query() { skip, take, keywords }): Promise<ArticleEntity[]> {
-    return await this.articleService.fetch(skip, take, keywords);
+  async fetch(@Query() dto: QueryArticleDto): Promise<IArticleRes> {
+    return await this.articleService.fetch(dto);
   }
 
   @Post()
